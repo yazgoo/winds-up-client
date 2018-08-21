@@ -90,10 +90,3 @@ class WindsUpClient
     puts Terminal::Table.new :rows => previous_rows if spots.size % 2 == 1 and !@options[:short]
   end
 end
-
-WindsUp.new(Trollop::options do
-  opt :short
-  opt :lpass
-  opt :user, "user", :type => :string
-  opt :password, "password", :type => :string
-end).display_favorite_spots
