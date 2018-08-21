@@ -1,0 +1,9 @@
+#!/bin/env ruby
+require 'winds-up-client'
+require 'trollop'
+WindsUpClient.new(Trollop::options do
+  opt :short
+  opt :lpass
+  opt :user, "user", :type => :string
+  opt :password, "password", :type => :string
+end).display_favorite_spots
