@@ -23,7 +23,7 @@ class WindsUpClient
 
   def parse_spot spot
     {
-      title: spot.search("a.title").map { |title| title.children.text },
+			title: spot.search("a.title").map { |title| title.children.text }[0],
       wind: spot.search("div.infosvent2").map { |info| info.children[1].text }[0],
       series: parse_series(spot)
     }
