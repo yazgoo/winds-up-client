@@ -2,7 +2,22 @@
 require 'mechanize'
 require 'date'
 require 'json'
-require 'terminal-table'
+require 'paint'
+
+class TerminalTable 
+
+	def initialize attributes
+		@rows = attributes[:rows]
+	end
+
+	def to_s
+    return "" if @rows.size == 0
+    widths = @rows.reduce(@rows[0].size.times.to_a.map { 0 } ) { |memo, row| memo.each_with_index.map { |item, i| [row.size > i ? row[i].size : 0, item].max } }
+    @rows.map do |row|
+      row.each_with_index.map { |item, i| "#{item}#{" " * (widths[i] - item.size)}" }.join(" ")
+    end.join("\n")
+	end
+end
 
 class WindsUpClient
 
@@ -41,22 +56,41 @@ class WindsUpClient
     spots = page.search("div.mt3").reverse.map { |spot| parse_spot spot }
   end
 
+  def bar size, alternate, bg
+    if !@options[:nocolor]
+      Paint[(" " * size), nil, bg]
+    else
+      alternate * size
+    end
+  end
+
+  def low size
+    bar size, "=", :blue
+  end
+
+  def high size
+    bar size, "-", :green
+  end
+
+  def expected size
+    bar size, "*", :yellow
+  end
+
   def series_handlers
     {
-      actual: (-> (x) {"#{"=" * x["low"]}#{"-" * (x["high"] - x["low"])} #{(x["high"] + x["low"])/2}"}),
-      expected: (-> (x) {"#{ "*" * x["y"]} #{x["y"]} #{x["o"]}"})
+      actual: (-> (x) {"#{low(x["low"])}#{high(x["high"] - x["low"])} #{(x["high"] + x["low"])/2}"}),
+      expected: (-> (x) {"#{ expected(x["y"])} #{x["y"]} #{x["o"]}"})
     }
   end
 
   def spot_row spot
     title = [spot[:title], spot[:wind]]
     i = 0
-    sampling = 2
     rows = []
     rows << title
     series_handlers.each do |kind, handler|
       spot[:series][kind].each do |value|
-        rows << [Time.at(value["x"] / 1000).to_datetime.to_s.gsub(/\+.*/, ""), handler.call(value)] if i % sampling == 0
+        rows << [Time.at(value["x"] / 1000).to_datetime.to_s.gsub(/\+.*/, ""), handler.call(value)] if i % @options[:sampling] == 0
         i += 1
       end
     end
@@ -77,16 +111,18 @@ class WindsUpClient
     spots = favorites_spots
     previous_rows = []
     spots.each_with_index do |spot, i|
-      if @options[:short]
-        puts "#{spot[:title]}: #{spot[:wind]}"
-      else
-        rows = spot_row spot
-        if i % 2 == 1
-          puts Terminal::Table.new :rows => join_rows(previous_rows, rows)
-        end
-        previous_rows = rows
-      end
+			if @options[:spot].nil? or spot[:title].downcase.include?(@options[:spot])
+				if @options[:short]
+					puts "#{spot[:title]}: #{spot[:wind]}"
+				else
+					rows = spot_row spot
+					if i % 2 == 1
+						puts TerminalTable.new :rows => join_rows(previous_rows, rows)
+					end
+					previous_rows = rows
+				end
+			end
     end
-    puts Terminal::Table.new :rows => previous_rows if spots.size % 2 == 1 and !@options[:short]
+    puts TerminalTable.new :rows => previous_rows if spots.size % 2 == 1 and !@options[:short]
   end
 end
