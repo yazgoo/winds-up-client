@@ -2,6 +2,7 @@
 require 'mechanize'
 require 'date'
 require 'json'
+require 'yaml'
 require 'paint'
 
 class TerminalTable 
@@ -76,15 +77,34 @@ class WindsUpClient
     bar size, "*", :yellow
   end
 
+  def to_arrows(cardinals)
+    {
+      se: "↖",
+      so: "↗",
+      no: "↘",
+      ne: "↙",
+    }.map { |name, value|
+      cardinals.sub!(name.to_s.upcase, value)
+    }
+    {
+      e: "←",
+      s: "↑",
+      o: "→",
+      n: "↓",
+    }.map { |name, value|
+      cardinals.sub!(name.to_s.upcase, value)
+    }
+    cardinals
+  end
   def series_handlers
     {
       actual: (-> (x) {"#{low(x["low"])}#{high(x["high"] - x["low"])} #{(x["high"] + x["low"])/2}"}),
-      expected: (-> (x) {"#{ expected(x["y"])} #{x["y"]} #{x["o"]}"})
+      expected: (-> (x) {"#{ expected(x["y"])} #{x["y"]} #{to_arrows(x["o"])}"})
     }
   end
 
   def spot_row spot
-    title = [spot[:title], spot[:wind]]
+    title = [spot[:title], to_arrows(spot[:wind])]
     i = 0
     rows = []
     rows << title
@@ -107,22 +127,43 @@ class WindsUpClient
     a.size > b.size ? join_rows_ordered(a, b) : join_rows_ordered(b, a)
   end
 
-  def display_favorite_spots
+  def favorites_spots_text
+    result = ""
     spots = favorites_spots
     previous_rows = []
     spots.each_with_index do |spot, i|
 			if @options[:spot].nil? or spot[:title].downcase.include?(@options[:spot])
 				if @options[:short]
-					puts "#{spot[:title]}: #{spot[:wind]}"
+					result += "#{spot[:title]}: #{to_arrows(spot[:wind])}\n"
+        elsif @options[:ultrashort]
+          result += "#{spot[:title][0]} #{to_arrows(spot[:wind]).sub(" nds", "")} "
 				else
 					rows = spot_row spot
 					if i % 2 == 1
-						puts TerminalTable.new :rows => join_rows(previous_rows, rows)
+            result += TerminalTable.new(:rows => join_rows(previous_rows, rows)).to_s
+            result += "\n"
 					end
 					previous_rows = rows
 				end
 			end
     end
-    puts TerminalTable.new :rows => previous_rows if spots.size % 2 == 1 and !@options[:short]
+    result += TerminalTable.new(:rows => previous_rows).to_s if spots.size % 2 == 1 and !@options[:short]
+    result + "\n"
+  end
+
+  def favorites_spots_text_with_cache
+    path = "#{ENV['HOME']}/.local/share/winds-up-client.cache"
+    if Time.now - File.mtime(path) > 60
+      File.write(path, favorites_spots_text)
+    end
+    File.read(path)
+  end
+
+  def display_favorite_spots
+    if @options[:cache]
+      puts favorites_spots_text_with_cache
+    else
+      puts favorites_spots_text
+    end
   end
 end

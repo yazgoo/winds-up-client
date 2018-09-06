@@ -3,10 +3,12 @@ require 'winds-up-client'
 require 'trollop'
 WindsUpClient.new(Trollop::options do
   opt :short, "short mode"
+  opt :ultrashort, "ultra short mode"
   opt :lpass, "use lastpass-cli to retrieve credentials"
   opt :user, "user", type: :string
   opt :password, "password", type: :string
   opt :sampling, "sampling factor for graphs", default: 2
 	opt :spot, "spot name", type: :string, default: nil
   opt :nocolor, "no color"
+  opt :cache, "cache result for a minute"
 end).display_favorite_spots
