@@ -136,7 +136,7 @@ class WindsUpClient
 				if @options[:short]
 					result += "#{spot[:title]}: #{to_arrows(spot[:wind])}\n"
         elsif @options[:ultrashort]
-          result += "#{spot[:title][0]} #{to_arrows(spot[:wind]).sub(" nds", "")} "
+          result += "#{spot[:title][0]}#{to_arrows(spot[:wind]).sub(" nds", "").sub(" ", "")}"
 				else
 					rows = spot_row spot
 					if i % 2 == 1
@@ -153,7 +153,7 @@ class WindsUpClient
 
   def favorites_spots_text_with_cache
     path = "#{ENV['HOME']}/.local/share/winds-up-client.cache"
-    if Time.now - File.mtime(path) > 60
+    if not File.exists?(path) or Time.now - File.mtime(path) > 60
       File.write(path, favorites_spots_text)
     end
     File.read(path)
