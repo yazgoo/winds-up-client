@@ -78,6 +78,7 @@ class WindsUpClient
   end
 
   def to_arrows(cardinals)
+    return "?" if cardinals.nil?
     {
       se: "↖",
       so: "↗",
