@@ -1,4 +1,5 @@
 require 'winds-up-client'
+require 'neovim'
 
 Neovim.plugin do |plug|
   plug.command(:WindsUp) do |nvim|
