@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
 	s.name        = 'winds-up-client'
-  s.version     = '0.0.5'
+  s.version     = '0.0.7'
   s.date        = '2018-08-19'
   s.summary     = 'client for winds-up.com'
   s.description = 'Allows to access winds-up.com on the CLI'
