@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'json', '~> 2.1'
   s.add_runtime_dependency 'trollop', '~> 2.1'
   s.add_runtime_dependency 'paint', '~> 2.0'
+  s.add_runtime_dependency 'neovim'
   s.authors     = ['Olivier Abdesselam']
   s.executables << 'winds-up-client'
   s.files       = ['lib/winds-up-client.rb']
