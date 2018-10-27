@@ -8,8 +8,8 @@ Neovim.plugin do |plug|
       begin
         nvim.set_var "windsup", client.favorites_spots_text.chomp
       rescue Exception
-        last_check = Time.new
       end
+      last_check = Time.new
     end
   end
 end
