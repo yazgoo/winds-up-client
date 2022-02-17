@@ -1,0 +1,568 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 11,
+  "iteration": 1645025197262,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "light-blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 10
+              },
+              {
+                "color": "#EAB839",
+                "value": 15
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "refId": "A",
+          "target": "aliasByNode(aggregateWithWildcards(windsup.*.actual.{high,low}, 'avg', 3), 1)",
+          "textEditor": true
+        }
+      ],
+      "title": "avg wind speed",
+      "type": "gauge"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 7,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "port-camargue.high"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "port-camargue.low"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.axisLabel",
+                "value": "time"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "refCount": 0,
+          "refId": "A",
+          "target": "aliasByNode(removeBelowValue(windsup.$spot.actual.high, 0), 1, 3)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "B",
+          "target": "aliasByNode(removeBelowValue(windsup.$spot.actual.low, 0), 1, 3)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "C",
+          "target": "aliasByNode(removeBelowValue(timeShift(windsup.$spot.expected.y, '3d', false, true), 0), 1, 2)",
+          "textEditor": false
+        }
+      ],
+      "title": "actual",
+      "type": "timeseries"
+    },
+    {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "from": -11,
+                "result": {
+                  "index": 0,
+                  "text": "N"
+                },
+                "to": 11
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 11.5,
+                "result": {
+                  "index": 1,
+                  "text": "NNE"
+                },
+                "to": 33.5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 34,
+                "result": {
+                  "index": 2,
+                  "text": "NE"
+                },
+                "to": 56
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 66.5,
+                "result": {
+                  "index": 3,
+                  "text": "ENE"
+                },
+                "to": 88.5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 79,
+                "result": {
+                  "index": 4,
+                  "text": "E"
+                },
+                "to": 101
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 101.5,
+                "result": {
+                  "index": 5,
+                  "text": "ESE"
+                },
+                "to": 123.5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 124,
+                "result": {
+                  "index": 6,
+                  "text": "SE"
+                },
+                "to": 146
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 146.5,
+                "result": {
+                  "index": 7,
+                  "text": "SSE"
+                },
+                "to": 168.5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 169,
+                "result": {
+                  "index": 8,
+                  "text": "S"
+                },
+                "to": 191
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 191.5,
+                "result": {
+                  "index": 9,
+                  "text": "SSO"
+                },
+                "to": 213.5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 214,
+                "result": {
+                  "index": 10,
+                  "text": "SO"
+                },
+                "to": 236
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 236.5,
+                "result": {
+                  "index": 11,
+                  "text": "OSO"
+                },
+                "to": 258.5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 259,
+                "result": {
+                  "index": 12,
+                  "text": "O"
+                },
+                "to": 281
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 281.5,
+                "result": {
+                  "index": 13,
+                  "text": "ONO"
+                },
+                "to": 303.5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 304,
+                "result": {
+                  "index": 14,
+                  "text": "NO"
+                },
+                "to": 326
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 326.5,
+                "result": {
+                  "index": 15,
+                  "text": "NNO"
+                },
+                "to": 348.5
+              },
+              "type": "range"
+            },
+            {
+              "options": {
+                "from": 349,
+                "result": {
+                  "index": 16,
+                  "text": "N"
+                },
+                "to": 361
+              },
+              "type": "range"
+            }
+          ],
+          "max": 360,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "degree"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "targets": [
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "C",
+          "target": "aliasByNode(removeBelowValue(timeShift(windsup.$spot.expected.o, '3d', false, true), 0), 1, 2)",
+          "textEditor": false
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "A",
+          "target": "aliasByNode(removeBelowValue(windsup.$spot.actual.o, 0), 1, 2)",
+          "textEditor": false
+        }
+      ],
+      "title": "direction",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 31,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "port-camargue"
+          ],
+          "value": [
+            "port-camargue"
+          ]
+        },
+        "datasource": null,
+        "definition": "windsup.*",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "spot",
+        "multi": true,
+        "name": "spot",
+        "options": [],
+        "query": "windsup.*",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3d",
+    "to": "now+3d"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "windsup",
+  "uid": "IgCdu_a7k",
+  "version": 35
+}
