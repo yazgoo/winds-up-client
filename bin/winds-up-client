@@ -9,6 +9,8 @@ WindsUpClient.new(Trollop::options do
   opt :password, "password", type: :string
   opt :sampling, "sampling factor for graphs", default: 2
 	opt :spot, "spot name", type: :string, default: nil
+	opt :ghost, "graphite host", type: :string, default: nil
+  opt :gport, "graphite port", type: :int, default: nil
   opt :nocolor, "no color"
   opt :cache, "cache result for a minute"
 end).display_favorite_spots

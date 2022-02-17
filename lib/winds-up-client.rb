@@ -33,7 +33,7 @@ class WindsUpClient
 
   def parse_series spot
     Hash[[:actual, :expected].zip(spot.search("script").map do |script|
-      JSON.parse(script.children[0].text.match(/data: \[.*\]/)[0].gsub("data:", "").gsub(",}", "}").gsub(/(\w+):/, '"\1":'))
+      JSON.parse(script.children[0].text.encode("utf-8", invalid: :replace, undef: :replace).match(/data: \[.*\]/)[0].gsub("data:", "").gsub(",}", "}").gsub(/(\w+):/, '"\1":'))
     end)]
   end
 
@@ -104,7 +104,34 @@ class WindsUpClient
     }
   end
 
+  def send_metric time, spot, name, value, time_shift = 0
+    payload = "windsup.#{spot[:title].encode!('UTF-8', 'UTF-8', :invalid => :replace, :replace => '').force_encoding('ascii').gsub(" ", "-").downcase}.#{name} #{value} #{time / 1000 + time_shift}\n"
+    socket = TCPSocket.new(@options[:ghost], @options[:gport] || 2003)
+    socket.write(payload)
+    socket.flush
+    socket.close
+  end
+
+  def send_orientation value_x, value, spot, metric, time_shift = 0
+    mapping = { N: 0, NNE: 22.5, NE: 45, ENE: 77.5, E: 90, ESE: 112.5, SE: 135, SSE: 157.5, S: 180, SSO: 202.5, SO:225, OSO: 247.5, O: 270, ONO: 292.5, NO: 315, NNO: 337.5}
+    send_metric value_x, spot, metric, mapping[value.to_sym], time_shift
+  end
+
+  def graphite_write spot
+    wind = spot[:wind].split(" ")
+    send_orientation (Time.now.to_i - 20) * 1000, wind[2], spot, "actual.o"
+    spot[:series][:actual].each do |value|
+      ["low", "high"].each { |t| send_metric value["x"], spot, "actual.#{t}", value[t] }
+    end
+    spot[:series][:expected].each do |value|
+      dt = -(3 * 24 * 60 * 60)
+      ["y", "o"].each { |t| send_metric value["x"], spot, "expected.#{t}", value[t], dt }
+      send_orientation value["x"], value["o"], spot, "expected.o", dt
+    end
+  end
+
   def spot_row spot
+    graphite_write spot if @options[:ghost]
     title = [spot[:title], to_arrows(spot[:wind])]
     i = 0
     rows = []
