@@ -26,9 +26,14 @@ class WindsUpClient
     `lpass show --#{what} winds-up.com`.chomp
   end
 
+  def rbw what
+    `rbw get --raw winds-up.com | jq -r .data.#{what}`.chomp
+  end
+
   def initialize options
     @options = options
     @options.merge!({username: lpass(:username), password: lpass(:password)}) if @options[:lpass]
+    @options.merge!({username: rbw(:username), password: rbw(:password)}) if @options[:bitwarden]
   end
 
   def parse_series spot
@@ -113,8 +118,10 @@ class WindsUpClient
   end
 
   def send_orientation value_x, value, spot, metric, time_shift = 0
-    mapping = { N: 0, NNE: 22.5, NE: 45, ENE: 77.5, E: 90, ESE: 112.5, SE: 135, SSE: 157.5, S: 180, SSO: 202.5, SO:225, OSO: 247.5, O: 270, ONO: 292.5, NO: 315, NNO: 337.5}
-    send_metric value_x, spot, metric, mapping[value.to_sym], time_shift
+    if not value.nil?
+      mapping = { N: 0, NNE: 22.5, NE: 45, ENE: 77.5, E: 90, ESE: 112.5, SE: 135, SSE: 157.5, S: 180, SSO: 202.5, SO:225, OSO: 247.5, O: 270, ONO: 292.5, NO: 315, NNO: 337.5}
+      send_metric value_x, spot, metric, mapping[value.to_sym], time_shift
+    end
   end
 
   def graphite_write spot

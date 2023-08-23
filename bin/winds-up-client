@@ -5,6 +5,7 @@ WindsUpClient.new(Trollop::options do
   opt :short, "short mode"
   opt :ultrashort, "ultra short mode"
   opt :lpass, "use lastpass-cli to retrieve credentials"
+  opt :bitwarden, "use bitwarden client rbw to retrieve credentials"
   opt :user, "user", type: :string
   opt :password, "password", type: :string
   opt :sampling, "sampling factor for graphs", default: 2
